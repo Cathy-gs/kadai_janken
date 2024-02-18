@@ -1,0 +1,163 @@
+/* ここから下に記載していく */
+@charset "utf-8";
+@import url(http://fonts.googleapis.com/earlyaccess/notosansjp.css);
+/* フォントファミリーをNoto SunsにするためにGoogleフォントを利用する */
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600&display=swap');
+/* フォントでShippori Minchoが使えるようにGoogleフォントを読み込む */
+
+body{
+    width: 1200px;
+    margin:auto;
+    padding:0;
+    text-align:left;
+    font-size: 32px;
+    font-family:  'Noto Sans JP', sans-serif;
+}
+header{
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+main{
+    border-bottom:1px solid #ccc;
+}
+footer{
+    background-color: #fff;
+    border-bottom:1px solid #ccc;
+    text-align: center;
+}
+p{
+    font-size:18px;
+    text-align: center;
+    height: 80px;
+    line-height: 30px;
+}
+ul{
+    padding: 0;
+    border-top: 1px solid #000000;
+    display:table;  /* 定義 */
+    table-layout: fixed;
+    width:100%;
+}
+li{
+    list-style-type:none;
+    border: 1px solid #666;
+    background-color: #FFF;
+    display:table-cell;  /* 定義 */
+    cursor: pointer;
+}
+li:hover{
+    background: #0066CC;
+    color:#fff;
+}
+
+h1{
+    font-size:32px;
+    text-align: center;
+    border-bottom:1px solid #fff;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height:40px;
+}
+
+/* button */
+
+
+/* intro */
+.intro {
+    width: 100%;
+    padding-top: 60px;
+    display: flex;
+    background-color: #fafafa;
+}
+
+.intro img{
+    width: 50%;
+    height: auto;
+}
+
+.intro_text{
+    text-align: center;
+    margin-bottom: 60px;
+    width: 480px;
+    padding-left: 50px;
+    box-sizing: border-box;
+    height: auto;
+}
+
+.intro_box{
+    width: 50%;
+    display: flex;
+    align-items: center;
+}
+
+.intro_text h3{
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.intro_text p{
+    text-align: left;
+}
+
+/* book_title */
+.book_title {
+    width: 100%;
+    padding-top: 60px;
+    display: flex;
+    background-color: #fafafa;
+}
+
+.book_title img{
+    width: 45%;
+    height: auto;
+}
+
+.book_title_text{
+    text-align: center;
+    margin-bottom: 60px;
+    width: 480px;
+    padding-left: 50px;
+    box-sizing: border-box;
+    height: auto;
+}
+
+.book_title_box{
+    width: 50%;
+    display: flex;
+    align-items: center;
+}
+
+.book_title_text h3{
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.book_title_text p{
+    text-align: left;
+}
+
+.buttons {
+    margin-top: 30px;
+    align-items: center;
+    color: #000;
+    background-color: #fff100;
+    border-bottom: 5px solid #ccc100;
+    font-size: 18px;
+    width: 180px;
+}
+
+.buttons:hover {
+  margin-top: 3px;
+  color: #000;
+  background: #fff20a;
+  border-bottom: 2px solid #ccc100;
+}
+
+/* book_idea */
+
+.Book_idea1 {
+    width: 50%;
+    display: flex;
+    align-items: center;
+}
