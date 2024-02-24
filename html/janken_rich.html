@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script src="/js/jquery-2.1.3.min.js"></script>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>大喜利編集会議</title>
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <img src="/img/header_logo.png" alt="Header Logo">
+            <h2>大喜利編集企画会議</h2>
+        </div>
+    </header>
+
+    <main>
+        <div class="button_list">
+            <!-- 結果を表示する -->
+            <img src="/img/whiteboard.png" alt="">
+            <div id="parent">
+                <div id="child1">
+                    <div id="resultBookTop"></div>
+                </div>
+                <div id="child2">
+                    <div id="resultBookBottom"></div>
+                </div>
+             </div>
+            <div class ="titlebotton">
+                <button onclick="rollTitle()" class="button_solid">タイトルを選ぶ</button>
+                <button id="resetButton" style="display: none;" onclick="resetTitle()" class="button_solid">リセット</button>
+                <button id="toggleSpeech" onclick="toggleSpeech()" class="button_solid">音声 ON</button>
+            </div>
+            
+        </div>
+
+    </main>
+
+    <footer></footer>
+    
+ 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+    // プレイヤーが抽選したタイトルの回数を0にする
+    let rollCountBookTop = 0;
+    let rollCountBookBottom = 0;
+    // 前の回に抽選したデータは何も含まれていないことを宣言する（オブジェクトの初期値で利用する：https://www.sejuku.net/blog/23762#index_id2
+    let previousRollBookTop = null;
+    let previousRollBookBottom = null;
+    // 読み上げはデフォルトオンにする
+    let speechEnabled = true;
+    // 前回表示された結果を考慮する
+    let lastRollBookTop = null;
+    let lastRollBookBottom = null;
+
+
+    // ボタンを押して、タイトルを抽選する。
+    function rollTitle() {
+        // タイトルの抽選回数を3回までに絞る
+        if (rollCountBookTop >= 3 && rollCountBookBottom >= 3) {
+            return;
+        }
+
+        // プレイヤーの値にデータが含まれていないことを定義する
+        let rollResultBookTop = null;
+        let rollResultBookBottom = null;
+
+        do{
+        // 変数を使い、タイトルの上下にランダム関数を割り当てる
+            rollResultBookTop = Math.floor(Math.random() * 6) + 1;
+        // 前回の結果結果を含まないように制御をする
+          } while (rollResultBookTop === lastRollBookTop);
+       
+        do {
+            rollResultBookBottom = Math.floor(Math.random() * 6) + 1;
+         }while (rollResultBookBottom === lastRollBookBottom);
+
+
+        // 結果を表示するために、以下の引数を受け取る
+        /* rollResult[hoge] :本のタイトルの抽選結果（1から6の整数）を示す
+           results[hoge] :本のタイトルの結果を表示するための要素のIDです。HTMLコードで定義している
+           previousRoll[hoge] :直前の本のタイトルの抽選結果を示す
+        */
+        displayResult(rollResultBookTop, 'resultBookTop', previousRollBookTop);
+        displayResult(rollResultBookBottom, 'resultBookBottom', previousRollBookBottom);
+
+        // 抽選が完了したら、rollCountに回数を追加する
+        rollCountBookTop++;
+        rollCountBookBottom++;
+
+        // リセットボタンの表示を、3回目に表示するように制御する
+        if (rollCountBookTop === 3 && rollCountBookBottom === 3) {
+            document.getElementById('resetButton').style.display = 'inline';
+            document.querySelector('button').disabled = true;
+        }
+
+        lastRollBookTop = rollResultBookTop;
+        lastRollBookBottom = rollResultBookBottom;
+    }
+
+    function displayResult(rollResult, playerId, previousRoll) {
+        const resultDiv = document.getElementById(playerId);
+        const resultText = document.createElement('p');
+        let translatedRoll = '';
+
+        switch (rollResult) {
+            case 1:
+                translatedRoll = (playerId === 'resultBookTop') ? 'マリア様が' : '見てる';
+                break;
+            case 2:
+                translatedRoll = (playerId === 'resultBookTop') ? 'フランダースの' : '犬';
+                break;
+            case 3:
+                translatedRoll = (playerId === 'resultBookTop') ? '鬼平' : '犯科帳';
+                break;
+            case 4:
+                translatedRoll = (playerId === 'resultBookTop') ? 'ジキル博士と' : 'ハイド氏';
+                break;
+            case 5:
+                translatedRoll = (playerId === 'resultBookTop') ? 'アンドロイドは' : '電気羊の夢を見るか';
+                break;
+            case 6:
+                translatedRoll = (playerId === 'resultBookTop') ? '桐島' : '部活やめるってよ';
+                break;
+        }
+
+        resultText.textContent = `${translatedRoll}`;
+        resultDiv.appendChild(resultText);
+
+        if (playerId === 'resultsBookTop' && rollResult === previousRoll) {
+            resultText.textContent += ' - 著作権違反です';
+        } else if (playerId === 'resultsBookBottom' && rollResult === previousRoll) {
+            resultText.textContent += ' - 著作権違反です';
+        }
+
+        // 結果を読み上げる
+        if (speechEnabled) {
+        speak(translatedRoll); 
+        }
+    }
+
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1;
+        window.speechSynthesis.speak(utterance);
+    }
+        
+    function toggleSpeech() {
+        speechEnabled = !speechEnabled;
+        document.getElementById('toggleSpeech').textContent = speechEnabled ? '音声 ON' : '音声 OFF';
+    }
+
+    function resetTitle() {
+        rollCountBookTop = 0;
+        rollCountBookBottom = 0;
+        previousRollBookTop = null;
+        previousRollBookBottom = null;
+        lastRollBookTop = null;
+        lastRollBookBottom = null;
+        document.getElementById('resultBookTop').innerHTML = '';
+        document.getElementById('resultBookBottom').innerHTML = '';
+        document.getElementById('resetButton').style.display = 'none';
+        document.querySelector('button').disabled = false;
+    }
+</script>
+</body>
+
+</html>
