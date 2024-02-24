@@ -6,25 +6,37 @@
     <meta name="viewport" content="width=device-width">
     <script src="js/jquery-2.1.3.min.js"></script>
     <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/sample.css">
-    <title>横暴な編集長</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>大喜利編集会議</title>
 </head>
 
 <body>
 
     <header>
-        <h1>横暴な編集企画会議</h1>
-
-
+        <div class="container">
+            <img src="/img/header_logo.png" alt="Header Logo">
+            <h2>大喜利編集企画会議</h2>
+        </div>
     </header>
 
     <main>
         <div class="button_list">
             <!-- 結果を表示する -->
-            <div id="resultBookTop"></div>
-            <div id="resultBookBottom"></div>
-            <button onclick="rollTitle()">タイトルを選ぶ</button>
-            <button id="resetButton" style="display: none;" onclick="resetTitle()">リセット</button>
+            <img src="/img/whiteboard.png" alt="">
+            <div id="parent">
+                <div id="child1">
+                    <div id="resultBookTop"></div>
+                </div>
+                <div id="child2">
+                    <div id="resultBookBottom"></div>
+                </div>
+             </div>
+            <div class ="titlebotton">
+                <button onclick="rollTitle()" class="button_solid">タイトルを選ぶ</button>
+                <button id="resetButton" style="display: none;" onclick="resetTitle()" class="button_solid">リセット</button>
+                <button id="toggleSpeech" onclick="toggleSpeech()" class="button_solid">音声 ON</button>
+            </div>
+            
         </div>
 
     </main>
@@ -34,32 +46,61 @@
  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-    let rollCountPlayer1 = 0;
-    let rollCountPlayer2 = 0;
-    let previousRollPlayer1 = null;
-    let previousRollPlayer2 = null;
+    // プレイヤーが抽選したタイトルの回数を0にする
+    let rollCountBookTop = 0;
+    let rollCountBookBottom = 0;
+    // 前の回に抽選したデータは何も含まれていないことを宣言する（オブジェクトの初期値で利用する：https://www.sejuku.net/blog/23762#index_id2
+    let previousRollBookTop = null;
+    let previousRollBookBottom = null;
+    // 読み上げはデフォルトオンにする
+    let speechEnabled = true;
+    // 前回表示された結果を考慮する
+    let lastRollBookTop = null;
+    let lastRollBookBottom = null;
 
+
+    // ボタンを押して、タイトルを抽選する。
     function rollTitle() {
-        if (rollCountPlayer1 >= 3 && rollCountPlayer2 >= 3) {
+        // タイトルの抽選回数を3回までに絞る
+        if (rollCountBookTop >= 3 && rollCountBookBottom >= 3) {
             return;
         }
 
-        const rollResultPlayer1 = Math.floor(Math.random() * 6) + 1;
-        const rollResultPlayer2 = Math.floor(Math.random() * 6) + 1;
+        // プレイヤーの値にデータが含まれていないことを定義する
+        let rollResultBookTop = null;
+        let rollResultBookBottom = null;
 
-        displayResult(rollResultPlayer1, 'resultBookTop', previousRollPlayer1);
-        displayResult(rollResultPlayer2, 'resultBookBottom', previousRollPlayer2);
+        do{
+        // 変数を使い、タイトルの上下にランダム関数を割り当てる
+            rollResultBookTop = Math.floor(Math.random() * 6) + 1;
+        // 前回の結果結果を含まないように制御をする
+          } while (rollResultBookTop === lastRollBookTop);
+       
+        do {
+            rollResultBookBottom = Math.floor(Math.random() * 6) + 1;
+         }while (rollResultBookBottom === lastRollBookBottom);
 
-        rollCountPlayer1++;
-        rollCountPlayer2++;
 
-        if (rollCountPlayer1 === 3 && rollCountPlayer2 === 3) {
+        // 結果を表示するために、以下の引数を受け取る
+        /* rollResult[hoge] :本のタイトルの抽選結果（1から6の整数）を示す
+           results[hoge] :本のタイトルの結果を表示するための要素のIDです。HTMLコードで定義している
+           previousRoll[hoge] :直前の本のタイトルの抽選結果を示す
+        */
+        displayResult(rollResultBookTop, 'resultBookTop', previousRollBookTop);
+        displayResult(rollResultBookBottom, 'resultBookBottom', previousRollBookBottom);
+
+        // 抽選が完了したら、rollCountに回数を追加する
+        rollCountBookTop++;
+        rollCountBookBottom++;
+
+        // リセットボタンの表示を、3回目に表示するように制御する
+        if (rollCountBookTop === 3 && rollCountBookBottom === 3) {
             document.getElementById('resetButton').style.display = 'inline';
             document.querySelector('button').disabled = true;
         }
 
-        previousRollPlayer1 = rollResultPlayer1;
-        previousRollPlayer2 = rollResultPlayer2;
+        lastRollBookTop = rollResultBookTop;
+        lastRollBookBottom = rollResultBookBottom;
     }
 
     function displayResult(rollResult, playerId, previousRoll) {
@@ -88,25 +129,39 @@
                 break;
         }
 
-        if (previousRoll === rollResult) {
-            resultText.textContent = `サイコロの目: ${translatedRoll} - 著作権違反です`;
-        } else {
-            resultText.textContent = `サイコロの目: ${translatedRoll}`;
+        resultText.textContent = `${translatedRoll}`;
+        resultDiv.appendChild(resultText);
+
+        if (playerId === 'resultsBookTop' && rollResult === previousRoll) {
+            resultText.textContent += ' - 著作権違反です';
+        } else if (playerId === 'resultsBookBottom' && rollResult === previousRoll) {
+            resultText.textContent += ' - 著作権違反です';
         }
 
-        resultDiv.appendChild(resultText);
-        speak(translatedRoll);
+        // 結果を読み上げる
+        if (speechEnabled) {
+        speak(translatedRoll); 
+        }
     }
 
-    function speak(text){
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1;
+        window.speechSynthesis.speak(utterance);
+    }
         
+    function toggleSpeech() {
+        speechEnabled = !speechEnabled;
+        document.getElementById('toggleSpeech').textContent = speechEnabled ? '音声 ON' : '音声 OFF';
     }
 
-    function resetGame() {
-        rollCountPlayer1 = 0;
-        rollCountPlayer2 = 0;
-        previousRollPlayer1 = null;
-        previousRollPlayer2 = null;
+    function resetTitle() {
+        rollCountBookTop = 0;
+        rollCountBookBottom = 0;
+        previousRollBookTop = null;
+        previousRollBookBottom = null;
+        lastRollBookTop = null;
+        lastRollBookBottom = null;
         document.getElementById('resultBookTop').innerHTML = '';
         document.getElementById('resultBookBottom').innerHTML = '';
         document.getElementById('resetButton').style.display = 'none';
