@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/sample.css">
+    <title>横暴な編集長</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>横暴な編集企画会議</h1>
+
+
+    </header>
+
+    <main>
+        <div class="button_list">
+            <!-- 結果を表示する -->
+            <div id="resultBookTop"></div>
+            <div id="resultBookBottom"></div>
+            <button onclick="rollTitle()">タイトルを選ぶ</button>
+            <button id="resetButton" style="display: none;" onclick="resetTitle()">リセット</button>
+        </div>
+
+    </main>
+
+    <footer></footer>
+    
+ 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+    let rollCountPlayer1 = 0;
+    let rollCountPlayer2 = 0;
+    let previousRollPlayer1 = null;
+    let previousRollPlayer2 = null;
+
+    function rollTitle() {
+        if (rollCountPlayer1 >= 3 && rollCountPlayer2 >= 3) {
+            return;
+        }
+
+        const rollResultPlayer1 = Math.floor(Math.random() * 6) + 1;
+        const rollResultPlayer2 = Math.floor(Math.random() * 6) + 1;
+
+        displayResult(rollResultPlayer1, 'resultBookTop', previousRollPlayer1);
+        displayResult(rollResultPlayer2, 'resultBookBottom', previousRollPlayer2);
+
+        rollCountPlayer1++;
+        rollCountPlayer2++;
+
+        if (rollCountPlayer1 === 3 && rollCountPlayer2 === 3) {
+            document.getElementById('resetButton').style.display = 'inline';
+            document.querySelector('button').disabled = true;
+        }
+
+        previousRollPlayer1 = rollResultPlayer1;
+        previousRollPlayer2 = rollResultPlayer2;
+    }
+
+    function displayResult(rollResult, playerId, previousRoll) {
+        const resultDiv = document.getElementById(playerId);
+        const resultText = document.createElement('p');
+        let translatedRoll = '';
+
+        switch (rollResult) {
+            case 1:
+                translatedRoll = (playerId === 'resultBookTop') ? 'マリア様が' : '見てる';
+                break;
+            case 2:
+                translatedRoll = (playerId === 'resultBookTop') ? 'フランダースの' : '犬';
+                break;
+            case 3:
+                translatedRoll = (playerId === 'resultBookTop') ? '鬼平' : '犯科帳';
+                break;
+            case 4:
+                translatedRoll = (playerId === 'resultBookTop') ? 'ジキル博士と' : 'ハイド氏';
+                break;
+            case 5:
+                translatedRoll = (playerId === 'resultBookTop') ? 'アンドロイドは' : '電気羊の夢を見るか';
+                break;
+            case 6:
+                translatedRoll = (playerId === 'resultBookTop') ? '桐島' : '部活やめるってよ';
+                break;
+        }
+
+        if (previousRoll === rollResult) {
+            resultText.textContent = `サイコロの目: ${translatedRoll} - 著作権違反です`;
+        } else {
+            resultText.textContent = `サイコロの目: ${translatedRoll}`;
+        }
+
+        resultDiv.appendChild(resultText);
+        speak(translatedRoll);
+    }
+
+    function speak(text){
+        
+    }
+
+    function resetGame() {
+        rollCountPlayer1 = 0;
+        rollCountPlayer2 = 0;
+        previousRollPlayer1 = null;
+        previousRollPlayer2 = null;
+        document.getElementById('resultBookTop').innerHTML = '';
+        document.getElementById('resultBookBottom').innerHTML = '';
+        document.getElementById('resetButton').style.display = 'none';
+        document.querySelector('button').disabled = false;
+    }
+</script>
+</body>
+
+</html>

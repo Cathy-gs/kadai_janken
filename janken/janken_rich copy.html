@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サイコロゲーム</title>
+<style>
+    .result {
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div id="resultsPlayer1"></div>
+<div id="resultsPlayer2"></div>
+<button onclick="rollDice()">さいころを振る</button>
+<button id="resetBtn" style="display: none;" onclick="resetGame()">リセット</button>
+
+<script>
+    let rollCountPlayer1 = 0;
+    let rollCountPlayer2 = 0;
+    let previousRollPlayer1 = null;
+    let previousRollPlayer2 = null;
+
+    function rollDice() {
+        if (rollCountPlayer1 >= 3 && rollCountPlayer2 >= 3) {
+            return;
+        }
+
+        const rollResultPlayer1 = Math.floor(Math.random() * 6) + 1;
+        const rollResultPlayer2 = Math.floor(Math.random() * 6) + 1;
+
+        displayResult(rollResultPlayer1, 'resultsPlayer1', previousRollPlayer1);
+        displayResult(rollResultPlayer2, 'resultsPlayer2', previousRollPlayer2);
+
+        rollCountPlayer1++;
+        rollCountPlayer2++;
+
+        if (rollCountPlayer1 === 3 && rollCountPlayer2 === 3) {
+            document.getElementById('resetBtn').style.display = 'inline';
+            document.querySelector('button').disabled = true;
+        }
+
+        previousRollPlayer1 = rollResultPlayer1;
+        previousRollPlayer2 = rollResultPlayer2;
+    }
+
+    function displayResult(rollResult, playerId, previousRoll) {
+        const resultDiv = document.getElementById(playerId);
+        const resultText = document.createElement('p');
+        let translatedRoll = '';
+
+        switch (rollResult) {
+            case 1:
+                translatedRoll = (playerId === 'resultsPlayer1') ? '猫に' : '小判';
+                break;
+            case 2:
+                translatedRoll = (playerId === 'resultsPlayer1') ? '豚に' : '真珠';
+                break;
+            case 3:
+                translatedRoll = (playerId === 'resultsPlayer1') ? '飛ぶ鳥' : '勢いを落とさず';
+                break;
+            case 4:
+                translatedRoll = (playerId === 'resultsPlayer1') ? '飼い犬に' : '手を噛まれる';
+                break;
+            case 5:
+                translatedRoll = (playerId === 'resultsPlayer1') ? '鶴の' : '一声';
+                break;
+            case 6:
+                translatedRoll = (playerId === 'resultsPlayer1') ? '猿も' : '木から落ちる';
+                break;
+        }
+
+        if (previousRoll === rollResult) {
+            resultText.textContent = `サイコロの目: ${translatedRoll} - 著作権違反です`;
+        } else {
+            resultText.textContent = `サイコロの目: ${translatedRoll}`;
+        }
+
+        resultDiv.appendChild(resultText);
+    }
+
+    function resetGame() {
+        rollCountPlayer1 = 0;
+        rollCountPlayer2 = 0;
+        previousRollPlayer1 = null;
+        previousRollPlayer2 = null;
+        document.getElementById('resultsPlayer1').innerHTML = '';
+        document.getElementById('resultsPlayer2').innerHTML = '';
+        document.getElementById('resetBtn').style.display = 'none';
+        document.querySelector('button').disabled = false;
+    }
+</script>
+
+</body>
+</html>
